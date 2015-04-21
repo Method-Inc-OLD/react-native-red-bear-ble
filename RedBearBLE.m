@@ -59,14 +59,18 @@ RCT_EXPORT_METHOD(connect)
         ble.peripherals = nil;
     
     [ble findBLEPeripherals:2];
-    RCTLogInfo(@"Searching for thing");
     
+    // We need to do this so that the timer isn't garbage collected before it fires!
+    [self performSelectorOnMainThread:@selector(setupTimer) withObject:self waitUntilDone:NO];
+}
+
+-(void) setupTimer
+{
     [NSTimer scheduledTimerWithTimeInterval:(float)2.0 target:self selector:@selector(connectionTimer:) userInfo:nil repeats:NO];
 }
 
 -(void) connectionTimer:(NSTimer *)timer
 {
-    
     if (ble.peripherals.count > 0)
     {
         [ble connectPeripheral:[ble.peripherals objectAtIndex:0]];
