@@ -1,4 +1,6 @@
 #import "RedBearBLE.h"
+#import "RCTBridge.h"
+#import "RCTEventDispatcher.h"
 
 @interface RedBearBLE()
 
@@ -12,6 +14,7 @@
 RCT_EXPORT_MODULE();
 
 @synthesize ble;
+@synthesize bridge = _bridge;
 
 - (instancetype)init
 {
@@ -33,9 +36,15 @@ RCT_EXPORT_METHOD(connect)
 
 -(void) bleDidConnect {
     RCTLogInfo(@"Connected");
+    [self.bridge.eventDispatcher sendDeviceEventWithName:@"BLEConnected"
+                                                 body:@"ok"
+     ];
 };
 -(void) bleDidDisconnect {
     RCTLogInfo(@"Disconnected");
+    [self.bridge.eventDispatcher sendDeviceEventWithName:@"BLEDisconnected"
+                                                 body:@"ok"
+     ];
     
 };
 -(void) bleDidUpdateRSSI:(NSNumber *) rssi {
