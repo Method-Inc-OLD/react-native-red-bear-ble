@@ -56,21 +56,25 @@ RCT_EXPORT_METHOD(connect)
 
 - (void)bleConnect
 {
-    if (ble.activePeripheral)
-        if(ble.activePeripheral.state == CBPeripheralStateConnected)
-        {
-            [[ble CM] cancelPeripheralConnection:[ble activePeripheral]];
-            RCTLogInfo(@"Thing connected to other periperial");
-            return;
+    if (ble.isConnected) {
+        [self bleDidConnect];
+    } else {
+        if (ble.activePeripheral)
+            if(ble.activePeripheral.state == CBPeripheralStateConnected) {
+                [[ble CM] cancelPeripheralConnection:[ble activePeripheral]];
+                RCTLogInfo(@"Thing connected to other periperial");
+                return;
+            }
+    
+        if (ble.peripherals) {
+            ble.peripherals = nil;
         }
     
-    if (ble.peripherals)
-        ble.peripherals = nil;
+        [ble findBLEPeripherals:2];
     
-    [ble findBLEPeripherals:2];
-    
-    // We need to do this so that the timer isn't garbage collected before it fires!
-    [self performSelectorOnMainThread:@selector(setupTimer) withObject:self waitUntilDone:NO];
+        // We need to do this so that the timer isn't garbage collected before it fires!
+        [self performSelectorOnMainThread:@selector(setupTimer) withObject:self waitUntilDone:NO];
+    }
 }
 
 -(void) setupTimer
