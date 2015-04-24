@@ -92,6 +92,9 @@ RCT_EXPORT_METHOD(connect)
     else
     {
         RCTLogInfo(@"Connection timeout");
+        [self.bridge.eventDispatcher sendDeviceEventWithName:@"BLEConnectionTimeout"
+                                                        body:@"ok"
+         ];
     }
 }
 
