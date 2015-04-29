@@ -1,6 +1,7 @@
 #import "RedBearBLE.h"
 #import "RCTBridge.h"
 #import "RCTEventDispatcher.h"
+#import "RCTConvert.h"
 
 @interface RedBearBLE()
 
@@ -29,6 +30,19 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(connect)
 {
     [self bleConnect];
+}
+
+RCT_EXPORT_METHOD(sendByteArray:(NSNumberArray *) bytes)
+{
+    unsigned char vals[[bytes count]];
+    for(int i=0; i<sizeof(vals); i++){
+        NSNumber *num = (NSNumber*)[bytes objectAtIndex:i];
+        vals[i] = num.charValue;
+    }
+    
+    NSData *data = [NSData dataWithBytes:&vals length:sizeof(vals)];
+
+    [ble write:data];
 }
 
 // BLE
